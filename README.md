@@ -12,4 +12,4 @@
 ![preview output](https://github.com/truekendor/chessboard-detection-in-browser/blob/main/images/detection-preview-result-1.jpg)
 
 # Acknowledgements
-- Detection output parsed with slightly modified version of the ![onnx runtime web](https://github.com/Hyuto/yolov8-onnxruntime-web)
+- Detection output parsed with slightly modified version of the [onnx runtime web](https://github.com/Hyuto/yolov8-onnxruntime-web)
