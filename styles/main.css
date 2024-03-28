@@ -1,0 +1,414 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --header-bg-color: rgb(19, 19, 19);
+  --footer-bg-color: rgb(19, 19, 19);
+
+  --body-bg-color: rgb(42, 42, 42);
+
+  --backdrop-color: rgba(0, 0, 0, 0.35);
+  --link-bg-color: hsl(45, 18%, 9%);
+
+  --font-color-main: rgb(224, 219, 215);
+
+  --label-bg-color: hsl(40, 9%, 16%);
+  --label-bg-color-hover: hsl(40, 9%, 19%);
+
+  --outline-color: hsla(38, 31%, 80%, 0.75);
+  --outline-subtle: rgba(255, 255, 255, 0.2);
+
+  --canvas-width: min(1200px, 95%);
+  --chessboard-placeholder-width: min(600px, 95%);
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  align-items: center;
+
+  flex-direction: column;
+
+  font-family: Helvetica, Arial, sans-serif;
+
+  background-color: var(--body-bg-color);
+
+  position: relative;
+
+  overflow-x: hidden;
+}
+
+/* 
+----------------
+themes (not implemented)
+----------------
+*/
+
+body.brown {
+  --header-bg-color: rgb(34, 30, 27);
+  --footer-bg-color: rgb(34, 30, 27);
+
+  --body-bg-color: rgb(255, 255, 255);
+
+  --backdrop-color: rgba(0, 0, 0, 0.55);
+  --link-bg-color: hsl(48, 100%, 99%);
+
+  --font-color-links: hsl(20, 6%, 9%);
+  --font-color-links: 20, 6%, 9%;
+}
+
+/* 
+----------------
+header
+----------------
+*/
+
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  flex-direction: column;
+
+  flex-grow: 1;
+  flex-shrink: 0;
+
+  width: 100%;
+
+  padding: 0.4rem;
+
+  color: var(--font-color-main);
+
+  background-color: var(--header-bg-color);
+}
+
+.header h3 {
+  margin-inline-end: 0.8rem;
+}
+
+.header p {
+  font-weight: 600;
+}
+
+.label-wrapper {
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding-inline: 0.25rem;
+
+  margin-block-end: 0.5rem;
+}
+
+.label-wrapper label {
+  margin-inline-start: 1rem;
+}
+
+.image-input-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: var(--label-bg-color);
+
+  padding: 0.6rem 1rem;
+  border-radius: 4px;
+
+  margin-block: 0.4rem;
+
+  text-align: center;
+
+  outline: 1px solid var(--outline-subtle);
+
+  cursor: pointer;
+  transition: background-color 80ms ease;
+}
+
+.image-input-label:focus,
+.image-input-label:focus-within,
+.image-input-label:active {
+  outline: 1px solid var(--outline-color);
+  background-color: var(--label-bg-color-hover);
+}
+
+.image-input-label:hover {
+  background-color: var(--label-bg-color-hover);
+}
+
+#image-input {
+  opacity: 0;
+  width: 0px;
+  height: 0px;
+
+  flex-shrink: 1;
+  outline: none;
+}
+
+/* 
+----------------
+main area
+----------------
+*/
+
+.main-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  height: 100%;
+
+  flex-direction: column;
+
+  position: relative;
+  isolation: isolate;
+
+  background-color: var(--body-bg-color);
+}
+
+/* todo change styles */
+.drag-over {
+  transition: background-color 0 400ms;
+
+  background-color: transparent;
+  opacity: 1;
+
+  background-color: transparent;
+  opacity: 0.8;
+  background-image: radial-gradient(rgb(91, 84, 77) 1.55px, transparent 1.55px);
+  background-size: 31px 31px;
+}
+
+/* 
+----------------
+canvases
+----------------
+*/
+
+.canvas-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+
+  width: 100%;
+
+  isolation: isolate;
+  overflow: hidden;
+
+  margin-block-end: 0.5rem;
+}
+
+.canvas-container.active > .main-canvas,
+.detection-boxes {
+  width: auto;
+  height: auto;
+
+  min-width: 600px;
+  min-height: 600px;
+
+  max-width: var(--canvas-width);
+  max-height: 600px;
+
+  border-radius: 5px;
+}
+
+.main-canvas {
+  background-color: var(--dark-tile);
+
+  box-shadow: 4px 4px 7px rgba(0, 0, 0, 0.463);
+}
+
+.detection-boxes {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+}
+
+/* 
+----------------
+Paste/Drop hint div
+----------------
+*/
+
+.info-div {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  gap: 10px;
+  padding: 1rem;
+
+  color: rgb(205, 204, 201);
+
+  pointer-events: none;
+
+  font-weight: 600;
+  font-size: 2rem;
+  user-select: none;
+}
+
+.insert-object {
+  fill: rgb(195, 192, 186);
+}
+
+/* 
+----------------
+bottom panel / footer
+----------------
+*/
+
+.links {
+  display: grid;
+  place-items: center;
+
+  gap: 0.2rem;
+
+  grid-template-columns: 1fr;
+
+  width: 100%;
+
+  margin-block-start: auto;
+
+  padding-block: 0.8rem;
+
+  flex-direction: column;
+
+  background-color: var(--footer-bg-color);
+
+  /* min-height: 14%; */
+  height: fit-content;
+
+  position: relative;
+}
+
+.links:empty {
+  height: 15%;
+}
+
+.link-wrapper {
+  display: flex;
+
+  padding: 0.5rem;
+}
+
+.links a {
+  word-break: break-all;
+
+  padding-block: 0.2rem;
+  background-color: var(--link-bg-color);
+
+  border-radius: 4px;
+
+  padding-inline: 0.4rem;
+
+  font-family: monospace;
+
+  color: hsl(var(--font-color-links));
+  font-weight: 600;
+  font-size: 1.2rem;
+  line-height: 1.1;
+
+  text-align: center;
+  text-decoration: none;
+
+  outline: 1px solid var(--outline-subtle);
+}
+
+.links a:hover {
+  text-decoration: underline;
+}
+
+.copy-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding-inline: 0.5rem;
+
+  outline: transparent;
+  border: transparent;
+
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+
+  cursor: pointer;
+
+  background-color: transparent;
+  outline: 1px solid var(--outline-subtle);
+
+  font-size: 1rem;
+  color: var(--font-color-main);
+  font-weight: 600;
+
+  border-left: 1px solid var(--outline-subtle);
+
+  transition: background-color 80ms ease;
+}
+
+.copy-btn:hover,
+.copy-btn:focus-visible {
+  background-color: var(--link-bg-color);
+}
+
+.copy-btn:focus-visible {
+  outline: 1px solid var(--outline-color);
+}
+
+/* 
+----------------
+utils
+----------------
+*/
+
+.pointer-none {
+  pointer-events: none;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+/* todo change canvas-size custom prop */
+@media screen and (max-width: 610px) {
+  .links a {
+    contain: content;
+    font-size: 1rem;
+  }
+
+  .link-wrapper {
+    max-height: 3.5rem;
+
+    overflow: hidden;
+    isolation: isolate;
+  }
+}
+
+/* ! dev */
+#preview-container {
+  position: fixed;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background-color: rgba(225, 105, 105, 0.074);
+
+  z-index: 100;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
