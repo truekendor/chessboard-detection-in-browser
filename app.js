@@ -3,17 +3,14 @@ import { detect } from "./detection.js";
 const fileInput = document.querySelector("#image-input");
 
 const mainContainer = document.querySelector(".main-container");
-// wrapper for buttons and heading
-const panel = document.querySelector(".panel");
 const canvasContainer = document.querySelector(".canvas-container");
 
 // container with Paste/Drop text
 const infoDiv = document.querySelector(".info-div");
 
 const canvas = document.querySelector(".main-canvas");
-const c = canvas.getContext("2d", {
-  willReadFrequently: true,
-});
+
+const loader = document.querySelector(".loader");
 
 const detectionBoxesCanvas = document.querySelector(".detection-boxes");
 
@@ -23,11 +20,11 @@ canvas.height = 600;
 const grid = document.querySelector(".chessboard");
 
 /**
- * @type {tf.GraphModel} yolov8
+ * @type {tf.GraphModel}
  */
 let detectionModel = null;
 
-await Promise.all([
+Promise.all([
   // chessboard detection model
   tf.loadGraphModel("./model_half/model.json", {
     onProgress: (fractions) => {
@@ -36,6 +33,7 @@ await Promise.all([
   }),
 ]).then((result) => {
   detectionModel = result[0];
+  document.body.removeChild(loader);
 
   const dummyInput = tf.ones(detectionModel.inputs[0].shape);
   const warmupResults = detectionModel.execute(dummyInput);
@@ -102,27 +100,40 @@ window.addEventListener("paste", async (e) => {
 
 window.addEventListener("drop", async (e) => {
   e.preventDefault();
+  if (!detectionModel) {
+    return;
+  }
 
   if (e.dataTransfer.files.length === 0) return false;
   await convertFile(e.dataTransfer.files[0]);
 
   mainContainer.classList.remove("drag-over");
 
-  panel.classList.remove("pointer-none");
   canvasContainer.classList.remove("pointer-none");
 });
 
 window.addEventListener("dragover", () => {
+  if (!detectionModel) {
+    return;
+  }
+
   mainContainer.classList.add("drag-over");
 
-  panel.classList.add("pointer-none");
   canvasContainer.classList.add("pointer-none");
 });
 
-window.addEventListener("dragleave", () => {
+window.addEventListener("dragleave", (e) => {
+  e.preventDefault();
+  if (!detectionModel) {
+    return;
+  }
+
   mainContainer.classList.remove("drag-over");
 });
 
 window.addEventListener("dragover", (e) => {
   e.preventDefault();
+  if (!detectionModel) {
+    return;
+  }
 });

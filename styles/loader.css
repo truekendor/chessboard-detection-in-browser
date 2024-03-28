@@ -14,6 +14,8 @@
   height: 100%;
 
   z-index: 99999;
+
+  pointer-events: all;
 }
 
 /* left loader */
@@ -31,11 +33,11 @@
   stroke: white;
   stroke-width: var(--_stroke-width);
 
-  animation: loader_1 var(--_animation_duration) infinite,
+  animation: loader var(--_animation_duration) infinite,
     spin_1 3000ms infinite linear;
 }
 
-@keyframes loader_1 {
+@keyframes loader {
   /**
     small_arc = 30deg 
   
