@@ -86,8 +86,11 @@ export function renderBoxesInverse(
   const ctx = canvas.getContext("2d");
   const colors = new Colors();
 
-  ctx.fillStyle = "rgba(10,10,10,0.6)";
+  ctx.fillStyle = "rgba(10,10,10,0.75)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // draw border box.
+  ctx.strokeStyle = "red";
 
   for (let i = 0; i < scores_data.length; ++i) {
     // filter based on class threshold
@@ -117,9 +120,6 @@ export function renderBoxesInverse(
     ctx.beginPath();
     ctx.clearRect(x1, y1, width, height);
     ctx.closePath();
-
-    // draw border box.
-    ctx.strokeStyle = color;
 
     ctx.lineWidth = Math.max(
       Math.min(ctx.canvas.width, ctx.canvas.height) / 150,
